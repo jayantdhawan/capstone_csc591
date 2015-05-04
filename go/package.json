@@ -6,12 +6,17 @@
     "start": "nodejs ./bin/www"
   },
   "dependencies": {
+    "bluebird": "^2.9.25",
     "body-parser": "~1.0.0",
     "cookie-parser": "~1.0.1",
     "debug": "~0.7.4",
     "express": "~4.0.0",
+    "hashmap": "^2.0.3",
     "jade": "~1.3.0",
+    "json": "^9.0.3",
+    "line-by-line": "^0.1.3",
     "morgan": "~1.0.0",
+    "sentiment": "^1.0.2",
     "socket.io": "^1.3.5",
     "static-favicon": "~1.0.0",
     "twit": "^1.1.20",

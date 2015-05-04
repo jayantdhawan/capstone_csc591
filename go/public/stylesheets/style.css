@@ -1,5 +1,6 @@
 body {
-	padding: 10px;
+	margin: 0px;
+	padding: 0px;
 	font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
 	background: #FFFFFF;
 }
@@ -15,19 +16,34 @@ a:hover {
 
 div#main {
 	position: relative;
-	width: 700px;
-	height: 600px;
-	margin: auto;
 }
 
 div#title {
 	font-size: 18pt;
+	font-weight: bold;
+}
 
+div#sectitle {
+	font-size: 14pt;
+}
+
+div#secdesc {
+	font-size: 12pt;
+}
+
+div#container_plot {
+	background: #FFFFFF;
+	padding: 5px;
 }
 
 div#series_chart_div {
 	width: 1100px;
 	height: 600px;
 	margin: auto;
-	border: 1px solid black;
+}
+
+div#container_most_retweeted {
+	background: #EEEEEE;
+	padding: 5px;
+	margin: 0px;
 }

@@ -6,7 +6,7 @@ var twitterAccessSecret = process.env.TWITTER_ACCESS_SECRET;
 
 var express = require('express');
 var path = require('path');
-var favicon = require('serve-favicon');
+var favicon = require('static-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
@@ -74,7 +74,7 @@ lr.on('line',function(line){
 	date_obj.month = date.getMonth() + 1;
 	date_obj.day = date.getDate();
 	date_obj.hour = date.getHours();
-	date_obj.minute = date.getMinutes();
+	date_obj.min = date.getMinutes();
 	date_obj = JSON.stringify(date_obj);
 
 	var text_str = obj.text.toLowerCase();
@@ -143,9 +143,10 @@ sio.sockets.on('connection', function(socket){
 	{
 		var score_obj = score_map.get(list_date_obj[i]);
 		var obj_data = {};
-		obj_data.date_obj = JSON.parse(list_date_obj[i]);
-		obj_data.date_obj = score_obj;
-		socket.emit('statsToClient');
+		obj_data.timestamp = JSON.parse(list_date_obj[i]);
+		obj_data.score = score_obj;
+		if (!(obj_data.score.team_1 > 100 || obj_data.score.team_2 > 100))
+			socket.emit('tweet_data', obj_data);
 //		console.log(JSON.stringify(list_date_obj[i]), " " + JSON.stringify(score_obj));
 
 	}

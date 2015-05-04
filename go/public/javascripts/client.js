@@ -1,4 +1,5 @@
 
+
 //
 // Google Chart
 //
@@ -34,13 +35,13 @@ function drawBubbleChart() {
   ]);*/
 
   options = {
-    title: 'Plot of the Twitter sentiment from one hour before to one hour after the match between RCB and KKR',
     width: 1100,
-    height: 500,
-    hAxis: {title: 'Time', format: 'MMM dd, hh:mm:ssaa', gridlines : {count : 10}},
+    height: 540,
+    hAxis: {title: 'Time', format: 'MMM dd, hh:mm:ssaa', gridlines : {count : 12},
+            minorGridlines : {count : 5}},
     vAxis: {title: 'Sentiment'},
     bubble: {opacity: 0.5, textStyle: {fontSize: 1}},
-    animation: {duration: 500, startup: true},
+    animation: {duration: 4, startup: true},
     sizeAxis: {maxSize: 8}
   };
 
@@ -75,6 +76,9 @@ $(document).ready(function() {
     tweet_q[tweet_q_n] = tweet_data;
     tweet_q_n++;
 	});
+
+  $("#container_most_retweeted").append('<blockquote class="twitter-tweet" lang="en"><p lang="en" dir="ltr">KKR batting. Last two balls. 1 run to win. &amp; commentator says now batsman should get out! Without any malice I want to say “ I hate u sir!”</p>&mdash; Shah Rukh Khan (@iamsrk) <a href="https://twitter.com/iamsrk/status/593843887719849984">April 30, 2015</a></blockquote>');
+
 });
 
 function updateBubbleChart(/*id, timestamp, team1_value, team2_value*/) {
@@ -82,8 +86,9 @@ function updateBubbleChart(/*id, timestamp, team1_value, team2_value*/) {
 
     id = tweet_q[tweet_q_i].id;
     timestamp = tweet_q[tweet_q_i].timestamp;
-    team1_value = tweet_q[tweet_q_i].team1_value;
-    team2_value = tweet_q[tweet_q_i].team2_value;
+    team1_value = tweet_q[tweet_q_i].score.team_1;
+    team2_value = tweet_q[tweet_q_i].score.team_2;
+    timestamp.second = 0;
 
     console.log(new Date(timestamp.year, timestamp.month - 1, timestamp.day, timestamp.hour, timestamp.min, timestamp.second));
 
@@ -121,7 +126,7 @@ function drawScatterChart () {
           },
           hAxis: {
             format: 'M/d/yy',
-            gridlines: {count: -1}
+            gridlines: {mincount: 10}
           },
           width: 1100,
           height: 500,
