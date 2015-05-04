@@ -19,3 +19,15 @@ div#main {
 	height: 600px;
 	margin: auto;
 }
+
+div#title {
+	font-size: 18pt;
+
+}
+
+div#series_chart_div {
+	width: 1100px;
+	height: 600px;
+	margin: auto;
+	border: 1px solid black;
+}

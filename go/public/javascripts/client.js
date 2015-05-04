@@ -1,16 +1,103 @@
 
 //
-// Google Chart stuff
+// Google Chart
 //
 
+var data;
+var chart;
+var options;
+
 // Load the Visualization API and the piechart package.
-google.load('visualization', '1.0', {'packages':['scatter']});
+google.load('visualization', '1.0', {'packages':['corechart']});
 
 // Set a callback to run when the Google Visualization API is loaded.
-google.setOnLoadCallback(drawChart);
+google.setOnLoadCallback(drawBubbleChart);
+
+// Callback that creates and populates a data table,
+// instantiates the pie chart, passes in the data and
+// draws it.
+function drawBubbleChart() {
+  console.log("Chart loaded");
+  data = new google.visualization.DataTable();
+  data.addColumn('string', 'id');
+  data.addColumn('datetime', 'time');
+  data.addColumn('number', 'rank');
+  data.addColumn('string', 'team');
+
+  /*data.addRows([
+    ['1', new Date(2015, 4, 30, 2, 3, 01), -4, 'RCB'], ['1', new Date(2015, 4, 30, 2, 3, 01), +5, 'KKR'], 
+    ['1', new Date(2015, 5, 1, 2, 3, 03), 2, 'RCB'],     ['1', new Date(2015, 5, 1, 2, 3, 03), 0, 'KKR'],
+    ['1', new Date(2015, 5, 1, 2, 3, 04), 1, 'RCB'],     ['1',new Date(2015, 5, 1, 2, 3, 04), 2, 'KKR'],
+    ['1', new Date(2015, 5, 2, 2, 3, 08), -2, 'RCB'],  ['1',new Date(2015, 5, 2, 2, 3, 08), 5, 'KKR'], 
+    ['1', new Date(2015, 5, 2, 3, 14, 33), 0, 'RCB'],     ['1',new Date(2015, 5, 2, 3, 14, 13), 4, 'KKR'],
+    ['1', new Date(2015, 5, 2, 5, 44, 33), 1, 'RCB'],     ['1',new Date(2015, 5, 2, 5, 44, 33), -4, 'KKR']
+  ]);*/
+
+  options = {
+    title: 'Plot of the Twitter sentiment from one hour before to one hour after the match between RCB and KKR',
+    width: 1100,
+    height: 500,
+    hAxis: {title: 'Time', format: 'MMM dd, hh:mm:ssaa', gridlines : {count : 10}},
+    vAxis: {title: 'Sentiment'},
+    bubble: {opacity: 0.5, textStyle: {fontSize: 1}},
+    animation: {duration: 500, startup: true},
+    sizeAxis: {maxSize: 8}
+  };
+
+  chart = new google.visualization.BubbleChart(document.getElementById('series_chart_div'));
+
+  var i = 0;
+  var drawChart = function() {
+    i++;
+    data.addRow(['1', new Date(2015, 5, 2, 1, 22+i, 10+i), i%12, 'RCB']);
+    chart.draw(data, options);
+    if (i > 20)
+    {
+      google.visualization.events.removeListener(yo);
+    }
+  }
+
+  yo = google.visualization.events.addListener(chart, 'animationfinish', updateBubbleChart);
+
+  chart.draw(data, options);
+}
+
+var tweet_q_i = 0;
+var tweet_q_n = 0;
+var tweet_q = [];
+
+$(document).ready(function() {
+
+	sio = io();
+
+	sio.on('tweet_data', function(tweet_data) {
+		console.log(tweet_data);
+    tweet_q[tweet_q_n] = tweet_data;
+    tweet_q_n++;
+	});
+});
+
+function updateBubbleChart(/*id, timestamp, team1_value, team2_value*/) {
+  if (tweet_q_i < tweet_q_n) {
+
+    id = tweet_q[tweet_q_i].id;
+    timestamp = tweet_q[tweet_q_i].timestamp;
+    team1_value = tweet_q[tweet_q_i].team1_value;
+    team2_value = tweet_q[tweet_q_i].team2_value;
+
+    console.log(new Date(timestamp.year, timestamp.month - 1, timestamp.day, timestamp.hour, timestamp.min, timestamp.second));
+
+    data.addRow([id, new Date(timestamp.year, timestamp.month - 1, timestamp.day, timestamp.hour, timestamp.min, timestamp.second), team1_value, 'RCB']);
+    data.addRow([id, new Date(timestamp.year, timestamp.month - 1, timestamp.day, timestamp.hour, timestamp.min, timestamp.second), team2_value, 'KKR']);
+
+    chart.draw(data, options);
+
+    tweet_q_i++;
+  }
+}
 
 
-function drawChart () {
+function drawScatterChart () {
 
         var data = new google.visualization.DataTable();
         data.addColumn('datetime', 'Student ID');
@@ -53,74 +140,22 @@ function drawChart () {
 
     var chart = new google.charts.Scatter(document.getElementById('series_chart_div'));
 
-    var i = 0;
-	var updateChart = function() {
-		i++;
-		data.addRow([new Date(2015, 1, 1, 2, 3, 39+i), null, 67]);
-		chart.draw(data, options);
-	}
+  google.visualization.events.addListener(chart, 'error', function(err) {
+    console.log(err);
+  });
 
-	//google.visualization.events.addListener(chart, 'animationfinish', updateChart);
+
+    var i = 0;
+  var updateChart = function() {
+    console.log(options.animation);
+    i++;
+    data.addRow([new Date(2015, 1, 1, 2, 3, 20+i), null, 67]);
+    chart.draw(data, options);
+  }
+
+  //google.visualization.events.addListener(chart, 'animationfinish', updateChart);
 
     chart.draw(data, options);
 
     setInterval(updateChart, 2000);
 }
-
-
-// Callback that creates and populates a data table,
-// instantiates the pie chart, passes in the data and
-// draws it.
-function drawSeriesChart() {
-	alert("ASDA");
-  var data = google.visualization.arrayToDataTable([
-    ['ID', 'Life Expectancy', 'Fertility Rate', 'Region',     'Population'],
-    ['CAN',    80.66,              1.67,      'North America',  33739900],
-    ['DEU',    79.84,              1.36,      'Europe',         81902307],
-    ['DNK',    78.6,               1.84,      'Europe',         5523095],
-    ['EGY',    72.73,              2.78,      'Middle East',    79716203],
-    ['GBR',    80.05,              2,         'Europe',         61801570],
-    ['IRN',    72.49,              1.7,       'Middle East',    73137148],
-    ['IRQ',    68.09,              4.77,      'Middle East',    31090763],
-    ['ISR',    81.55,              2.96,      'Middle East',    7485600],
-    ['RUS',    68.6,               1.54,      'Europe',         141850000],
-    ['USA',    78.09,              2.05,      'North America',  307007000]
-  ]);
-
-
-  var options = {
-    title: 'Correlation between life expectancy, fertility rate and population of some world countries (2010)',
-    hAxis: {title: 'Life Expectancy'},
-    vAxis: {title: 'Fertility Rate'},
-    bubble: {textStyle: {fontSize: 11}},
-    animation: {duration: 1000, startup: true}
-  };
-
-  var chart = new google.visualization.BubbleChart(document.getElementById('series_chart_div'));
-
-	var i = 0;
- var drawChart = function() {
- 	i++;
- 	data.addRow(['India', 88+i, 0.3, 'Asia', 234234234]);
-  	chart.draw(data, options);
-  }
-
-  //google.visualization.events.addListener(chart, 'animationfinish', drawChart);
-
-  chart.draw(data, options);
-
-
-}
-
-
-
-
-$(document).ready(function() {
-
-	sio = io();
-
-	sio.on('tweet_info', function(data) {
-		console.log(data.timestamp);
-	});
-
-});

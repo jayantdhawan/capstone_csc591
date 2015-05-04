@@ -66,8 +66,24 @@ sio = require('socket.io').listen(server);
 sio.on('connection', function(socket) {
 	console.log("Client connected");
 
-	socket.emit("tweet_info", {'timestamp' : '231'});
+	data = [
+	    { id: '1', timestamp: {year: 2015, month: 4, day: 30, hour: 2, min: 3, second: 01}, team1_value: -4, team2_value: +5},
+	    { id: '2', timestamp: {year: 2015, month: 5, day: 1, hour: 2, min: 3, second: 03}, team1_value: 2, team2_value: 0},
+	    { id: '3', timestamp: {year: 2015, month: 5, day: 1, hour: 2, min: 3, second: 04}, team1_value: 1, team2_value: 2},
+	    { id: '4', timestamp: {year: 2015, month: 5, day: 2, hour: 2, min: 3, second: 08}, team1_value: -2, team2_value: 5}, 
+	    { id: '5', timestamp: {year: 2015, month: 5, day: 2, hour: 3, min: 14, second: 33}, team1_value: 0, team2_value: 4},
+	    { id: '6', timestamp: {year: 2015, month: 5, day: 2, hour: 5, min: 44, second: 33}, team1_value: 1, team2_value: -4}
+	];
+
+	console.log(data);
+
+	for (t in data) {
+		socket.emit("tweet_data", data[t]);
+	}
+	
+
 });
+
 
 // End
 
