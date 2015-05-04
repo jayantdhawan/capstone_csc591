@@ -48,6 +48,7 @@ lr.on('error',function(err){
 	console.log("Error in reading")
 });
 
+/*
 lr.on('end',function (){
 	var list_date_obj = score_map.keys();
 
@@ -57,10 +58,11 @@ lr.on('end',function (){
 	
 		if(score_obj.team_1 != 0 && score_obj.team_2 != 0)
 		{
-//			console.log(JSON.stringify(list_date_obj[i]), " " + JSON.stringify(score_obj));
+			console.log(JSON.stringify(list_date_obj[i]), " " + JSON.stringify(score_obj));
 		}
 	}
 });
+*/
 
 lr.on('line',function(line){
 	var obj = JSON.parse(line);
@@ -79,8 +81,6 @@ lr.on('line',function(line){
 	var sentiment_results = sentiment(text_str);
 	var team1 = text_str.search('rcb');
 	var team2 = text_str.search('kkr');
-
-	console.log("Geo- " + obj.)
 
 	var score = sentiment_results.score;
 
@@ -137,12 +137,26 @@ sio.sockets.on('connection', function(socket){
 
 	console.log('Web client connected');
 
+	var list_date_obj = score_map.keys();
+
+	for(var i=0; i<list_date_obj.length; i++)
+	{
+		var score_obj = score_map.get(list_date_obj[i]);
+		var obj_data = {};
+		obj_data.date_obj = JSON.parse(list_date_obj[i]);
+		obj_data.date_obj = score_obj;
+		socket.emit('statsToClient');
+//		console.log(JSON.stringify(list_date_obj[i]), " " + JSON.stringify(score_obj));
+
+	}
+
+	/*
 	setInterval(function() {
 	//	console.log('Stats to Client send');
 		socket.emit('statsToClient', score_map);
 	},3000);
 
-
+	*/
 //		var sentimental_results = sentimental.analyze(tweet.text.toLowerCase())
 //		console.log("Sentimental" + sentimental_results);
 
