@@ -1,0 +1,21 @@
+body {
+	padding: 10px;
+	font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+	background: #FFFFFF;
+}
+
+a {
+	color: #444444;
+	text-decoration: none;
+}
+
+a:hover {
+	color: #AAAAAA;
+}
+
+div#main {
+	position: relative;
+	width: 700px;
+	height: 600px;
+	margin: auto;
+}
