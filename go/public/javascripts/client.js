@@ -14,6 +14,8 @@ google.load('visualization', '1.0', {'packages':['corechart']});
 // Set a callback to run when the Google Visualization API is loaded.
 google.setOnLoadCallback(drawBubbleChart);
 
+geo_init();
+
 // Callback that creates and populates a data table,
 // instantiates the pie chart, passes in the data and
 // draws it.
@@ -66,20 +68,65 @@ $(document).ready(function() {
     tweet_q_n++;
 	});
 
-
   sio.on('top_tweets', function(top_tweets_array) {
     console.log(top_tweets_array);
     displayTopTweets(top_tweets_array);
   });
 
+  sio.on('geo_data_team1', function(geo_data) {
+        console.log(geo_data);
+
+        for(i =0;i<geo_data.length;i++)
+          geo_chart_data.addRow([geo_data[i][0], geo_data[i][1],0]);
+        
+        geo_chart.draw(geo_chart_data, geo_chart_options);
+  });
+  sio.on('geo_data_team2', function(geo_data) {
+        console.log("asdadada");
+        for(i =0;i<geo_data.length;i++)
+          geo_chart_data.addRow([geo_data[i][0], geo_data[i][1],1]);
+        
+        geo_chart.draw(geo_chart_data, geo_chart_options);
+  })
+
   setInterval(updateBubbleChart, 1);
 });
+
+var geo_chart_data;
+var geo_chart_options;
+var geo_chart;
+
+function geo_init () {
+  google.load("visualization", "1", {packages:["geochart"]});
+  google.setOnLoadCallback(drawRegionsMap);
+
+  function drawRegionsMap() {
+    geo_chart_data = new google.visualization.DataTable();
+
+    geo_chart_data.addColumn('number', 'lat');
+    geo_chart_data.addColumn('number', 'long');
+    geo_chart_data.addColumn('number', 'color');
+    //geo_chart_data.addColumn('number', 'size');
+
+    geo_chart_options = {
+        sizeAxis: { minSize: 3, maxSize: 3 },
+        displayMode: 'markers',
+        legend: 'none',
+        region: 142,
+        colorAxis: {values: [0, 1], colors: ['#e7711c', '#4374e0']} // orange to blue
+    };
+
+    geo_chart = new google.visualization.GeoChart(document.getElementById('regions_div'));
+    //chart.draw(geo_chart_data, geo_chart_options);
+  }
+}
+
 
 function updateBubbleChart(/*id, timestamp, team1_value, team2_value*/) {
   if (tweet_q_i < tweet_q_n) {
     $("#count").text(tweet_q_i);
 
-    for (i = 0; i < 20; i++) {
+    for (i = 0; i < 40; i++) {
       id = tweet_q[tweet_q_i].id;
       timestamp = tweet_q[tweet_q_i].timestamp;
       team1_value = tweet_q[tweet_q_i].score.team_1;

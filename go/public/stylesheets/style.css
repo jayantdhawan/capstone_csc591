@@ -48,7 +48,7 @@ div#sectitle {
 div#secdesc {
 	font-size: 12pt;
 	font-style: italic;
-	color: #555555;
+	color: #444444;
 	margin-bottom: 5px;
 }
 
@@ -57,7 +57,7 @@ div.container_odd {
 }
 
 div.container_even {
-	background: #BBBBBB;
+	background: #FFFFFF;
 }
 
 div#container_section {
