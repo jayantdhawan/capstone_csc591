@@ -1,8 +1,4 @@
-// Keys from ~/.bashrc file
-var twitterConsumerKey = process.env.TWITTER_CONSUMER_KEY;
-var twitterConsumerSecret = process.env.TWITTER_CONSUMER_SECRET;
-var twitterAccessToken = process.env.TWITTER_ACCESS_TOKEN;
-var twitterAccessSecret = process.env.TWITTER_ACCESS_SECRET;
+// Modules Required
 
 var express = require('express');
 var path = require('path');
@@ -11,29 +7,23 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var sentiment = require('sentiment');
-//var async = require("async");
-var twitter = require('twitter');
-var Promise = require('bluebird');
 var fs = require('fs');
 var json_obj = require('json');
 var HashMap = require('hashmap');
 var LineByLineReader = require('line-by-line');
 var Heap = require('heap');
-
-var love_words = 0;
-var hate_words = 0;
-var total_words = 0;
-var love_per, hate_per;
 var routes = require('./routes/index');
 var users = require('./routes/users');
+
+// Map to store the total sentiment score for both teams per minute
 var score_map = new HashMap();
+
+// Array to store the geographical location of the users tweeting about team 1.
 var geo_team1 = [];
+// Array to store the geographical location of the users tweeting about team 2.
 var geo_team2 = [];
-var Twit = require('twit');
-// Twit Initialization
 
-console.log("start");
-
+// Getting the server ready to accept connection on localhost and port 3000.
 var app = express();
 var server = require('http').createServer(app);
 var port = 3000;
@@ -43,53 +33,28 @@ console.log("Socket.io server listening at http://127.0.0.1:" + port);
 // Listen to Client requests
 var sio = require('socket.io').listen(server);
 
+// Creating the Heap to store the top-k famous tweets.
 var heap_retweet = new Heap(function(a,b){
 	return a.no_retweet - b.no_retweet;
 });
 
+// Creating the lineReader object to read the tweets one by one from file without storing all of them in memory.
 lr = new LineByLineReader('batch/final_file_to_read',{ encoding: 'utf8' });
 
+// Error handling if file not found
 lr.on('error',function(err){
 	console.log("Error in reading")
 });
 
-/*
-lr.on('end',function (){
-	var list_date_obj = score_map.keys();
+//Setting the value of top-k to 10;
+var topk_value = 10;
 
-	for(var i=0; i<list_date_obj.length; i++)
-	{
-		var score_obj = score_map.get(list_date_obj[i]);
-	
-		if(score_obj.team_1 != 0 && score_obj.team_2 != 0)
-		{
-			console.log(JSON.stringify(list_date_obj[i]), " " + JSON.stringify(score_obj));
-		}
-	}
-});
-*/
-
-lr.on('end',function(){
-
-	console.log("End");
-
-	for(i=0;i<geo_team1.length;i++)
-	{
-		console.log("Geo1- "+ JSON.stringify(geo_team1[i]));
-	}
-
-	for(i=0;i<geo_team2.length;i++)
-	{
-		console.log("Geo2- "+ JSON.stringify(geo_team2[i]));
-	}
-
-});
-
-
+// Event handler to read the file line by line and process them.
 lr.on('line',function(line){
-	var obj = JSON.parse(line);
 
-	//console.log("Inside read line by line");
+// Converting the tweet received to JSON object
+	var obj = JSON.parse(line);
+// From the tweet created_date, fetch the year, month, date, hour, minute.
 	var date = new Date(obj.created_at);
 	var date_obj = {};
 	date_obj.year = date.getFullYear();
@@ -97,32 +62,39 @@ lr.on('line',function(line){
 	date_obj.day = date.getDate();
 	date_obj.hour = date.getHours();
 	date_obj.min = date.getMinutes();
+// Stringify the JSON object so that Hashmap can be processed faster. 
 	date_obj = JSON.stringify(date_obj);
 
+// Converting the text to lower case and apply the sentimant analysis to it.
 	var text_str = obj.text.toLowerCase();
 	var sentiment_results = sentiment(text_str);
 	var team1 = text_str.search('rcb');
 	var team2 = text_str.search('kkr');
-
 	var score = sentiment_results.score;
 
+// If the score returned by sentiment analyser is non zero then process the tweets for sentiment.
 	if(score != 0)
 	{
-		if(team1 != -1 && team2 == -1) // Tweet about team 1 only
+		if(team1 != -1 && team2 == -1) // Tweets about team 1 only
 		{
 			insert_into_map(score,1,date_obj);
 		}
 
-		if(team2 != -1 && team1 == -1) // Tweet about team 2 only
+		if(team2 != -1 && team1 == -1) // Tweets about team 2 only
 		{
 			insert_into_map(score,2,date_obj);
 		}
 	}
-	
+
+// Fetching the re-tweet data from the tweet 	
 	var no_retweet = obj.retweet_count;
 	var retweeted_status = obj.retweeted_status;
+
+// If the count of retweet is more than zero and it is the original tweet (i.e. retweeted_status is NULL) then process them for getting the top-k retweets.
 	if(no_retweet > 0 && retweeted_status == null)
 	{
+
+// Creating the object to store the tweet information needed by the client to display the tweet using the Twitter JS. 
 		var retweet_obj = {};
 		retweet_obj.text = text_str;
 		retweet_obj.tweet_id = obj.id_str;
@@ -131,9 +103,8 @@ lr.on('line',function(line){
 		retweet_obj.no_retweet = no_retweet;
 		retweet_obj.user = obj.user.name;
 
-	//	console.log(JSON.stringify(retweet_obj));
-		
-		if(heap_retweet.size() >= 10)
+// Maintaining the heap to store only the top-k tweets with maximum retweet count
+		if(heap_retweet.size() >= topk_value)
 		{
 			heap_retweet.push(retweet_obj);
 			heap_retweet.heapify();
@@ -145,11 +116,15 @@ lr.on('line',function(line){
 		}
 	}
 
+// Storing the geo co-ordinates from the tweets to diplay geographically users on the map.
+
 	var location_user = obj.geo;
 
 	if(location_user != null)
 	{
 		location_user = location_user.coordinates;
+
+	// String the co-ordinates for users tweeting about team 1 and team 2.
 
 		if(!(location_user[0] == 0 && location_user[1] == 0))
 		{
@@ -166,8 +141,10 @@ lr.on('line',function(line){
 	}
 });
 
+// Function to maintain the score_map based on the score and the time.
 function insert_into_map(score, team_no, date_obj)
 {
+// If key already exists, then add the score to previously stored value for the given team or create the new key with value as score for given team.
 	if(score_map.has(date_obj))
 	{
 		score_obj = score_map.get(date_obj);
@@ -201,60 +178,47 @@ function insert_into_map(score, team_no, date_obj)
 	}
 };
 
+// On accepting connection from client.
 sio.sockets.on('connection', function(socket){
 
 	console.log('Web client connected');
 
-	var list_date_obj = score_map.keys();
+// Store all the keys from score_map and send each key-value pair one by one to client.
+	
 
-	for(var i=0; i<list_date_obj.length; i++)
-	{
-		var score_obj = score_map.get(list_date_obj[i]);
-		var obj_data = {};
-		obj_data.timestamp = JSON.parse(list_date_obj[i]);
-		obj_data.score = score_obj;
-		if (!(obj_data.score.team_1 > 100 || obj_data.score.team_2 > 100))
+// Emit the sentiment score data to client.
+	
+	setTimeout(function() {
+
+		var list_date_obj = score_map.keys();
+		for(var i=0; i<list_date_obj.length; i++)
+		{
+			// Fetching the value from the give key.
+			var score_obj = score_map.get(list_date_obj[i]);
+			var obj_data = {};
+			obj_data.timestamp = JSON.parse(list_date_obj[i]);
+			obj_data.score = score_obj;
+			//if (!(obj_data.score.team_1 > 100 || obj_data.score.team_2 > 100))
+			// Emit the score for both team to the cleint.
 			socket.emit('tweet_data', obj_data);
-	}
-
-	socket.emit('top_tweets',heap_retweet.toArray().sort(function(a,b){
-		return b.no_retweet - a.no_retweet;
-	}));
-
-	socket.emit('geo_data_team1',geo_team1);
-	socket.emit('geo_data_team2',geo_team2);
-
-	/*
-	setInterval(function() {
-	//	console.log('Stats to Client send');
-		socket.emit('statsToClient', score_map);
-	},3000);
-
-	*/
-//		var sentimental_results = sentimental.analyze(tweet.text.toLowerCase())
-//		console.log("Sentimental" + sentimental_results);
-
-/*		total_words = total_words +1;
-		
-		if(love != -1){
-			love_words = love_words +1;
-			socket.volatile.emit("LovetweetsToClient",JSON.stringify({ name: tweet.user.screen_name , text: tweet.text }));
 		}
-		else if(hate != -1){
-			hate_words = hate_words +1;
-			socket.volatile.emit("HatetweetsToClient",JSON.stringify({ name: tweet.user.screen_name , text: tweet.text }));
-		}
-// Calculating the percentage
-		love_per = (love_words/total_words) * 100;
-		hate_per = 100 - love_per;
-		
-});
-	setInterval(function() {
-	//	console.log('Stats to Client send');
-		socket.emit('statsToClient', JSON.stringify({ total_words: total_words , love_per: love_per , hate_per: hate_per}));
-	},3000);
+	},1000);
 
-*/
+//Emit the top-k tweets data to client
+	setTimeout(function(){
+			socket.emit('top_tweets',heap_retweet.toArray().sort(function(a,b){
+				return b.no_retweet - a.no_retweet;
+			}));
+	},1300);
+
+// Emit the Geographical data for both teams to client.
+	setTimeout(function() {
+		socket.emit('geo_data_team1',geo_team1);
+		socket.emit('geo_data_team2',geo_team2);
+	},1500);
+
+// Event handler if the client is disconnectd.
+
 	socket.on('disconnect', function() {
 	console.log('Web client disconnected');	
 	});
