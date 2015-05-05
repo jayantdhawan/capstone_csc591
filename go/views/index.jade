@@ -3,15 +3,22 @@ extends layout
 block content
   div#main
     div#title Sports Tweets Analyzer
-    div#container_plot
+    div#container_plot.container_odd
       div#sectitle Plot
       div#secdesc Plots tweet sentiments across the time duration of a sporting event
+      div#count
       div#series_chart_div
-    div#container_most_retweeted
+    div#container_most_retweeted.container_even
       div#sectitle Most Retweets
       div#secdesc The most retweeted tweet
-
-
+    div#container_other.container_odd
+      div#sectitle Other features
+      div#secdesc Description of other features
+    div#container_other_more.container_even
+      div#sectitle Other features
+      div#secdesc Description of other features
+    div#footer.container_odd Copyright
+      
 block scripts
   script(src="https://www.google.com/jsapi")
   script(src="/javascripts/socket.io.js")

@@ -15,25 +15,46 @@ a:hover {
 }
 
 div#main {
-	position: relative;
 }
 
 div#title {
-	font-size: 18pt;
-	font-weight: bold;
+	background: #8B3A3A;
+	width: 100%;
+	padding-left: 40px;
+	padding-right: 40px;
+	padding-top: 20px;
+	padding-bottom: 20px;
+	font-size: 20pt;
+	color: #FFFFFF;
+	height:140px;
 }
 
 div#sectitle {
 	font-size: 14pt;
+	margin-bottom: 5px;
 }
 
 div#secdesc {
 	font-size: 12pt;
 }
 
-div#container_plot {
+div.container_odd {
 	background: #FFFFFF;
-	padding: 5px;
+	padding-left: 40px;
+	padding-right: 40px;
+	padding-top: 20px;
+	padding-bottom: 20px;
+}
+
+div.container_even {
+	background: #EEEEEE;
+	padding-left: 40px;
+	padding-right: 40px;
+	padding-top: 20px;
+	padding-bottom: 20px;
+}
+
+div#container_plot {
 }
 
 div#series_chart_div {
@@ -43,7 +64,9 @@ div#series_chart_div {
 }
 
 div#container_most_retweeted {
-	background: #EEEEEE;
-	padding: 5px;
-	margin: 0px;
+}
+
+div#footer {
+	height: 30px;
+	margin: auto;
 }

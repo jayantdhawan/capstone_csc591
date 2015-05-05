@@ -36,29 +36,18 @@ function drawBubbleChart() {
 
   options = {
     width: 1100,
-    height: 540,
-    hAxis: {title: 'Time', format: 'MMM dd, hh:mm:ssaa', gridlines : {count : 12},
-            minorGridlines : {count : 5}},
+    height: 440,
+    hAxis: {title: 'Time', format: 'MMM dd, hh:mm aa', gridlines : {count : 8},
+            minorGridlines : {count : 1}},
     vAxis: {title: 'Sentiment'},
     bubble: {opacity: 0.5, textStyle: {fontSize: 1}},
-    animation: {duration: 4, startup: true},
-    sizeAxis: {maxSize: 8}
+    //animation: {duration: 1, startup: true},
+    sizeAxis: {maxSize: 5}
   };
 
   chart = new google.visualization.BubbleChart(document.getElementById('series_chart_div'));
 
-  var i = 0;
-  var drawChart = function() {
-    i++;
-    data.addRow(['1', new Date(2015, 5, 2, 1, 22+i, 10+i), i%12, 'RCB']);
-    chart.draw(data, options);
-    if (i > 20)
-    {
-      google.visualization.events.removeListener(yo);
-    }
-  }
-
-  yo = google.visualization.events.addListener(chart, 'animationfinish', updateBubbleChart);
+  //yo = google.visualization.events.addListener(chart, 'animationfinish', updateBubbleChart);
 
   chart.draw(data, options);
 }
@@ -77,27 +66,34 @@ $(document).ready(function() {
     tweet_q_n++;
 	});
 
-  $("#container_most_retweeted").append('<blockquote class="twitter-tweet" lang="en"><p lang="en" dir="ltr">KKR batting. Last two balls. 1 run to win. &amp; commentator says now batsman should get out! Without any malice I want to say “ I hate u sir!”</p>&mdash; Shah Rukh Khan (@iamsrk) <a href="https://twitter.com/iamsrk/status/593843887719849984">April 30, 2015</a></blockquote>');
+  setInterval(updateBubbleChart, 1);
 
+  $("#container_most_retweeted").append('<blockquote class="twitter-tweet" lang="en"><p lang="en" dir="ltr">KKR batting. Last two balls. 1 run to win. &amp; commentator says now batsman should get out! Without any malice I want to say “ I hate u sir!”</p>&mdash; Shah Rukh Khan (@iamsrk) <a href="https://twitter.com/iamsrk/status/593843887719849984"></a></blockquote>');
+
+  $("#container_most_retweeted").append('<blockquote class="twitter-tweet" lang="en"><p lang="en" dir="ltr">KKR batting. Last two balls. 1 run to win. &amp; commentator says now batsman should get out! Without any malice I want to say “ I hate u sir!”</p>&mdash; Shah Rukh Khan (@iamsrk) <a href="https://twitter.com/iamsrk/status/593843887719849984"></a></blockquote>');
+  
 });
 
 function updateBubbleChart(/*id, timestamp, team1_value, team2_value*/) {
   if (tweet_q_i < tweet_q_n) {
+    $("#count").text(tweet_q_i);
 
-    id = tweet_q[tweet_q_i].id;
-    timestamp = tweet_q[tweet_q_i].timestamp;
-    team1_value = tweet_q[tweet_q_i].score.team_1;
-    team2_value = tweet_q[tweet_q_i].score.team_2;
-    timestamp.second = 0;
+    for (i = 0; i < 1; i++) {
+      id = tweet_q[tweet_q_i].id;
+      timestamp = tweet_q[tweet_q_i].timestamp;
+      team1_value = tweet_q[tweet_q_i].score.team_1;
+      team2_value = tweet_q[tweet_q_i].score.team_2;
+      timestamp.second = 0;
 
-    console.log(new Date(timestamp.year, timestamp.month - 1, timestamp.day, timestamp.hour, timestamp.min, timestamp.second));
+      //console.log(new Date(timestamp.year, timestamp.month - 1, timestamp.day, timestamp.hour, timestamp.min, timestamp.second));
 
-    data.addRow([id, new Date(timestamp.year, timestamp.month - 1, timestamp.day, timestamp.hour, timestamp.min, timestamp.second), team1_value, 'RCB']);
-    data.addRow([id, new Date(timestamp.year, timestamp.month - 1, timestamp.day, timestamp.hour, timestamp.min, timestamp.second), team2_value, 'KKR']);
+      data.addRow([id, new Date(timestamp.year, timestamp.month - 1, timestamp.day, timestamp.hour, timestamp.min, timestamp.second), team1_value, 'RCB']);
+      data.addRow([id, new Date(timestamp.year, timestamp.month - 1, timestamp.day, timestamp.hour, timestamp.min, timestamp.second), team2_value, 'KKR']);
+
+      tweet_q_i++;
+    }
 
     chart.draw(data, options);
-
-    tweet_q_i++;
   }
 }
 

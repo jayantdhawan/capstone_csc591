@@ -77,23 +77,27 @@ lr.on('line',function(line){
 	date_obj.min = date.getMinutes();
 	date_obj = JSON.stringify(date_obj);
 
-	var text_str = obj.text.toLowerCase();
-	var sentiment_results = sentiment(text_str);
-	var team1 = text_str.search('rcb');
-	var team2 = text_str.search('kkr');
+	if ((date_obj.day == 2) &&
+		(date_obj.hour >= 9 && date_obj.hour < 16)) {
+		console.log("Found");
+		var text_str = obj.text.toLowerCase();
+		var sentiment_results = sentiment(text_str);
+		var team1 = text_str.search('rcb');
+		var team2 = text_str.search('kkr');
 
-	var score = sentiment_results.score;
+		var score = sentiment_results.score;
 
-	if(score != 0)
-	{
-		if(team1 != -1 && team2 == -1) // Tweet about team 1 only
+		if(score != 0)
 		{
-			insert_into_map(score,1,date_obj);
-		}
+			if(team1 != -1 && team2 == -1) // Tweet about team 1 only
+			{
+				insert_into_map(score,1,date_obj);
+			}
 
-		if(team2 != -1 && team1 == -1) // Tweet about team 2 only
-		{
-			insert_into_map(score,2,date_obj);
+			if(team2 != -1 && team1 == -1) // Tweet about team 2 only
+			{
+				insert_into_map(score,2,date_obj);
+			}
 		}
 	}
 });

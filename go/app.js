@@ -67,12 +67,12 @@ sio.on('connection', function(socket) {
 	console.log("Client connected");
 
 	data = [
-	    { id: '1', timestamp: {year: 2015, month: 4, day: 30, hour: 2, min: 3, second: 01}, team1_value: -4, team2_value: +5},
-	    { id: '2', timestamp: {year: 2015, month: 5, day: 1, hour: 2, min: 3, second: 03}, team1_value: 2, team2_value: 0},
-	    { id: '3', timestamp: {year: 2015, month: 5, day: 1, hour: 2, min: 3, second: 04}, team1_value: 1, team2_value: 2},
-	    { id: '4', timestamp: {year: 2015, month: 5, day: 2, hour: 2, min: 3, second: 08}, team1_value: -2, team2_value: 5}, 
-	    { id: '5', timestamp: {year: 2015, month: 5, day: 2, hour: 3, min: 14, second: 33}, team1_value: 0, team2_value: 4},
-	    { id: '6', timestamp: {year: 2015, month: 5, day: 2, hour: 5, min: 44, second: 33}, team1_value: 1, team2_value: -4}
+	    { id: '1', timestamp: {year: 2015, month: 4, day: 30, hour: 2, min: 3, second: 01}, score: {team_1: -4, team_2: +5}},
+	    { id: '2', timestamp: {year: 2015, month: 5, day: 1, hour: 2, min: 3, second: 03},  score: {team_1: 2, team_2: 0}},
+	    { id: '3', timestamp: {year: 2015, month: 5, day: 1, hour: 2, min: 3, second: 04},  score: {team_1: 1, team_2: 2}},
+	    { id: '4', timestamp: {year: 2015, month: 5, day: 2, hour: 2, min: 3, second: 08},  score: {team_1: -2, team_2: 5}}, 
+	    { id: '5', timestamp: {year: 2015, month: 5, day: 2, hour: 3, min: 14, second: 33}, score: {team_1: 0, team_2: 4}},
+	    { id: '6', timestamp: {year: 2015, month: 5, day: 2, hour: 5, min: 44, second: 33}, score: {team_1: 1, team_2: -4}}
 	];
 
 	console.log(data);
