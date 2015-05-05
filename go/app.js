@@ -46,6 +46,12 @@ lr.on('error',function(err){
 	console.log("Error in reading")
 });
 
+var file_processed = false;
+
+lr.on('end',function(){
+	file_processed = true;
+});
+
 //Setting the value of top-k to 10;
 var topk_value = 10;
 
@@ -185,44 +191,56 @@ sio.sockets.on('connection', function(socket){
 
 // Store all the keys from score_map and send each key-value pair one by one to client.
 	
-
 // Emit the sentiment score data to client.
+	setTimeout(send_to_socket, 1000,socket);
+		// Emit the Geographical data for both teams to client.
 	
-	setTimeout(function() {
-
-		var list_date_obj = score_map.keys();
-		for(var i=0; i<list_date_obj.length; i++)
-		{
-			// Fetching the value from the give key.
-			var score_obj = score_map.get(list_date_obj[i]);
-			var obj_data = {};
-			obj_data.timestamp = JSON.parse(list_date_obj[i]);
-			obj_data.score = score_obj;
-			//if (!(obj_data.score.team_1 > 100 || obj_data.score.team_2 > 100))
-			// Emit the score for both team to the cleint.
-			socket.emit('tweet_data', obj_data);
-		}
-	},1000);
-
-//Emit the top-k tweets data to client
-	setTimeout(function(){
-			socket.emit('top_tweets',heap_retweet.toArray().sort(function(a,b){
-				return b.no_retweet - a.no_retweet;
-			}));
-	},1300);
-
-// Emit the Geographical data for both teams to client.
-	setTimeout(function() {
-		socket.emit('geo_data_team1',geo_team1);
-		socket.emit('geo_data_team2',geo_team2);
-	},1500);
-
 // Event handler if the client is disconnectd.
 
 	socket.on('disconnect', function() {
 	console.log('Web client disconnected');	
 	});
 });
+
+function send_to_socket(socket)
+{
+
+	if(!file_processed)
+	{
+		setTimeout(send_to_socket, 1000,socket);
+		return;
+	}
+	else
+	{
+		setTimeout(function() {
+
+			var list_date_obj = score_map.keys();
+			for(var i=0; i<list_date_obj.length; i++)
+			{
+				// Fetching the value from the give key.
+				var score_obj = score_map.get(list_date_obj[i]);
+				var obj_data = {};
+				obj_data.timestamp = JSON.parse(list_date_obj[i]);
+				obj_data.score = score_obj;
+				//if (!(obj_data.score.team_1 > 100 || obj_data.score.team_2 > 100))
+				// Emit the score for both team to the cleint.
+				socket.emit('tweet_data', obj_data);
+			}
+		},150);
+
+		//Emit the top-k tweets data to client
+		setTimeout(function(){
+			socket.emit('top_tweets',heap_retweet.toArray().sort(function(a,b){
+				return b.no_retweet - a.no_retweet;
+			}));
+		},400);
+
+		setTimeout(function() {
+			socket.emit('geo_data_team1',geo_team1);
+			socket.emit('geo_data_team2',geo_team2);
+		},10);
+	}
+};
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));

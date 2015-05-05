@@ -193,6 +193,7 @@ $(document).ready(function() {
           geo_chart_data.addRow([geo_data[i][0], geo_data[i][1],0]);
 
         geo_chart.draw(geo_chart_data, geo_chart_options);
+        $("#geo_loading").hide();
   });
 
   // Listener on the 'geo_data_team2' event for geocoding data of team 2
@@ -201,11 +202,12 @@ $(document).ready(function() {
           geo_chart_data.addRow([geo_data[i][0], geo_data[i][1],1]);
 
         geo_chart.draw(geo_chart_data, geo_chart_options);
+        $("#geo_loading").hide();
   })
 
   // Call updateBubbleChart every 1 ms
   //if (tweet_q_i > )
-  setInterval(updateBubbleChart_q, 500);
+  setInterval(updateBubbleChart_q, 100);
 });
 
 
