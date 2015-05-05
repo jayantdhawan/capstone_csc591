@@ -27,7 +27,8 @@ var love_per, hate_per;
 var routes = require('./routes/index');
 var users = require('./routes/users');
 var score_map = new HashMap();
-var geo_map = new HashMap();
+var geo_team1 = [];
+var geo_team2 = [];
 var Twit = require('twit');
 // Twit Initialization
 
@@ -66,19 +67,24 @@ lr.on('end',function (){
 		}
 	}
 });
+*/
 
 lr.on('end',function(){
 
-	locations = geo_map.keys();
 	console.log("End");
 
-	for(i=0;i<locations.length;i++)
+	for(i=0;i<geo_team1.length;i++)
 	{
-		console.log("Geo- "+ JSON.stringify(locations[i]) + " " + geo_map.get(locations[i]));
+		console.log("Geo1- "+ JSON.stringify(geo_team1[i]));
+	}
+
+	for(i=0;i<geo_team2.length;i++)
+	{
+		console.log("Geo2- "+ JSON.stringify(geo_team2[i]));
 	}
 
 });
-*/
+
 
 lr.on('line',function(line){
 	var obj = JSON.parse(line);
@@ -140,20 +146,22 @@ lr.on('line',function(line){
 	}
 
 	var location_user = obj.geo;
+
 	if(location_user != null)
 	{
 		location_user = location_user.coordinates;
 
-		if(geo_map.has(location_user))
+		if(!(location_user[0] == 0 && location_user[1] == 0))
 		{
-			var count_location = geo_map.get(location_user);
-			count_location += 1;
-			geo_map.set(location_user,count_location);
-		}
-		else
-		{
-			count_location = 1;
-			geo_map.set(location_user,count_location);
+			if(team1 != -1 && location_user) // RCB
+			{
+				geo_team1[geo_team1.length] = location_user;
+			}
+
+			if(team2 != -1) // KKR
+			{
+				geo_team2[geo_team2.length] = location_user;
+			}
 		}
 	}
 });
@@ -213,7 +221,8 @@ sio.sockets.on('connection', function(socket){
 		return b.no_retweet - a.no_retweet;
 	}));
 
-	socket.emit('geo_data',geo_map.keys());
+	socket.emit('geo_data_team1',geo_team1);
+	socket.emit('geo_data_team2',geo_team2);
 
 	/*
 	setInterval(function() {
