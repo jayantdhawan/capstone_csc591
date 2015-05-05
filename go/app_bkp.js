@@ -68,13 +68,15 @@ lr.on('end',function (){
 });
 
 lr.on('end',function(){
-	var heap_array = heap_retweet.toArray();
-	heap_array = heap_array.sort(function(a,b){
-		return b.no_retweet - a.no_retweet;
-	});
-	console.log("Inside end func");
-	for(var i=0; i < heap_array.length;i++)
-		console.log("Heap- " + JSON.stringify(heap_array[i]));
+
+	locations = geo_map.keys();
+	console.log("End");
+
+	for(i=0;i<locations.length;i++)
+	{
+		console.log("Geo- "+ JSON.stringify(locations[i]) + " " + geo_map.get(locations[i]));
+	}
+
 });
 */
 
@@ -136,6 +138,24 @@ lr.on('line',function(line){
 			heap_retweet.push(retweet_obj);
 		}
 	}
+
+	var location_user = obj.geo;
+	if(location_user != null)
+	{
+		location_user = location_user.coordinates;
+
+		if(geo_map.has(location_user))
+		{
+			var count_location = geo_map.get(location_user);
+			count_location += 1;
+			geo_map.set(location_user,count_location);
+		}
+		else
+		{
+			count_location = 1;
+			geo_map.set(location_user,count_location);
+		}
+	}
 });
 
 function insert_into_map(score, team_no, date_obj)
@@ -192,6 +212,8 @@ sio.sockets.on('connection', function(socket){
 	socket.emit('top_tweets',heap_retweet.toArray().sort(function(a,b){
 		return b.no_retweet - a.no_retweet;
 	}));
+
+	socket.emit('geo_data',geo_map.keys());
 
 	/*
 	setInterval(function() {
