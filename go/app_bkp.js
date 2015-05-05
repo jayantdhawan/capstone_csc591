@@ -11,13 +11,14 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var sentiment = require('sentiment');
-var async = require("async");
+//var async = require("async");
 var twitter = require('twitter');
 var Promise = require('bluebird');
 var fs = require('fs');
 var json_obj = require('json');
 var HashMap = require('hashmap');
-var LineByLineReader = require('line-by-line')
+var LineByLineReader = require('line-by-line');
+var Heap = require('heap');
 
 var love_words = 0;
 var hate_words = 0;
@@ -41,6 +42,9 @@ console.log("Socket.io server listening at http://127.0.0.1:" + port);
 // Listen to Client requests
 var sio = require('socket.io').listen(server);
 
+var heap_retweet = new Heap(function(a,b){
+	return a.no_retweet - b.no_retweet;
+});
 
 lr = new LineByLineReader('batch/final_file_to_read',{ encoding: 'utf8' });
 
@@ -62,6 +66,16 @@ lr.on('end',function (){
 		}
 	}
 });
+
+lr.on('end',function(){
+	var heap_array = heap_retweet.toArray();
+	heap_array = heap_array.sort(function(a,b){
+		return b.no_retweet - a.no_retweet;
+	});
+	console.log("Inside end func");
+	for(var i=0; i < heap_array.length;i++)
+		console.log("Heap- " + JSON.stringify(heap_array[i]));
+});
 */
 
 lr.on('line',function(line){
@@ -77,27 +91,48 @@ lr.on('line',function(line){
 	date_obj.min = date.getMinutes();
 	date_obj = JSON.stringify(date_obj);
 
-	if ((date_obj.day == 2) &&
-		(date_obj.hour >= 9 && date_obj.hour < 16)) {
-		console.log("Found");
-		var text_str = obj.text.toLowerCase();
-		var sentiment_results = sentiment(text_str);
-		var team1 = text_str.search('rcb');
-		var team2 = text_str.search('kkr');
+	var text_str = obj.text.toLowerCase();
+	var sentiment_results = sentiment(text_str);
+	var team1 = text_str.search('rcb');
+	var team2 = text_str.search('kkr');
 
-		var score = sentiment_results.score;
+	var score = sentiment_results.score;
 
-		if(score != 0)
+	if(score != 0)
+	{
+		if(team1 != -1 && team2 == -1) // Tweet about team 1 only
 		{
-			if(team1 != -1 && team2 == -1) // Tweet about team 1 only
-			{
-				insert_into_map(score,1,date_obj);
-			}
+			insert_into_map(score,1,date_obj);
+		}
 
-			if(team2 != -1 && team1 == -1) // Tweet about team 2 only
-			{
-				insert_into_map(score,2,date_obj);
-			}
+		if(team2 != -1 && team1 == -1) // Tweet about team 2 only
+		{
+			insert_into_map(score,2,date_obj);
+		}
+	}
+	
+	var no_retweet = obj.retweet_count;
+	var retweeted_status = obj.retweeted_status;
+	if(no_retweet > 0 && retweeted_status == null)
+	{
+		var retweet_obj = {};
+		retweet_obj.text = text_str;
+		retweet_obj.tweet_id = obj.id_str;
+		retweet_obj.user_id = obj.user.id;
+		retweet_obj.user_name= obj.user.screen_name;
+		retweet_obj.no_retweet = no_retweet;
+
+	//	console.log(JSON.stringify(retweet_obj));
+		
+		if(heap_retweet.size() >= 10)
+		{
+			heap_retweet.push(retweet_obj);
+			heap_retweet.heapify();
+			heap_retweet.pop();
+		}
+		else
+		{
+			heap_retweet.push(retweet_obj);
 		}
 	}
 });
@@ -151,9 +186,11 @@ sio.sockets.on('connection', function(socket){
 		obj_data.score = score_obj;
 		if (!(obj_data.score.team_1 > 100 || obj_data.score.team_2 > 100))
 			socket.emit('tweet_data', obj_data);
-//		console.log(JSON.stringify(list_date_obj[i]), " " + JSON.stringify(score_obj));
-
 	}
+
+	socket.emit('top_tweets',heap_retweet.toArray().sort(function(a,b){
+		return b.no_retweet - a.no_retweet;
+	}));
 
 	/*
 	setInterval(function() {
