@@ -18,43 +18,53 @@ div#main {
 }
 
 div#title {
-	background: #8B3A3A;
 	width: 100%;
 	padding-left: 40px;
 	padding-right: 40px;
 	padding-top: 20px;
 	padding-bottom: 20px;
 	font-size: 20pt;
+	color: #000000;
+	height: 80px;
+}
+
+div#container_section_header {
+	background: #00aced;
 	color: #FFFFFF;
-	height:140px;
+	width: 100%;
+	height: 40px;
+	padding-left: 40px;
+	padding-right: 40px;
+	padding-top: 20px;
+	padding-bottom: 20px;
 }
 
 div#sectitle {
-	font-size: 14pt;
+	font-size: 16pt;
 	margin-bottom: 5px;
+	color: #FFFFFF;
 }
 
 div#secdesc {
 	font-size: 12pt;
+	font-style: italic;
+	color: #555555;
+	margin-bottom: 5px;
 }
 
 div.container_odd {
 	background: #FFFFFF;
-	padding-left: 40px;
-	padding-right: 40px;
-	padding-top: 20px;
-	padding-bottom: 20px;
 }
 
 div.container_even {
-	background: #EEEEEE;
+	background: #BBBBBB;
+}
+
+div#container_section {
 	padding-left: 40px;
 	padding-right: 40px;
 	padding-top: 20px;
 	padding-bottom: 20px;
-}
-
-div#container_plot {
 }
 
 div#series_chart_div {
@@ -64,6 +74,17 @@ div#series_chart_div {
 }
 
 div#container_most_retweeted {
+}
+
+div#top_tweets_left {
+	display: inline-block;
+	width: 50%;
+}
+
+div#top_tweets_right {
+	display: inline-block;
+	vertical-align: top;
+	width: 50%;
 }
 
 div#footer {

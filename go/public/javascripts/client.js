@@ -61,24 +61,25 @@ $(document).ready(function() {
 	sio = io();
 
 	sio.on('tweet_data', function(tweet_data) {
-		console.log(tweet_data);
+		//console.log(tweet_data);
     tweet_q[tweet_q_n] = tweet_data;
     tweet_q_n++;
 	});
 
+
+  sio.on('top_tweets', function(top_tweets_array) {
+    console.log(top_tweets_array);
+    displayTopTweets(top_tweets_array);
+  });
+
   setInterval(updateBubbleChart, 1);
-
-  $("#container_most_retweeted").append('<blockquote class="twitter-tweet" lang="en"><p lang="en" dir="ltr">KKR batting. Last two balls. 1 run to win. &amp; commentator says now batsman should get out! Without any malice I want to say “ I hate u sir!”</p>&mdash; Shah Rukh Khan (@iamsrk) <a href="https://twitter.com/iamsrk/status/593843887719849984"></a></blockquote>');
-
-  $("#container_most_retweeted").append('<blockquote class="twitter-tweet" lang="en"><p lang="en" dir="ltr">KKR batting. Last two balls. 1 run to win. &amp; commentator says now batsman should get out! Without any malice I want to say “ I hate u sir!”</p>&mdash; Shah Rukh Khan (@iamsrk) <a href="https://twitter.com/iamsrk/status/593843887719849984"></a></blockquote>');
-  
 });
 
 function updateBubbleChart(/*id, timestamp, team1_value, team2_value*/) {
   if (tweet_q_i < tweet_q_n) {
     $("#count").text(tweet_q_i);
 
-    for (i = 0; i < 1; i++) {
+    for (i = 0; i < 20; i++) {
       id = tweet_q[tweet_q_i].id;
       timestamp = tweet_q[tweet_q_i].timestamp;
       team1_value = tweet_q[tweet_q_i].score.team_1;
@@ -94,6 +95,22 @@ function updateBubbleChart(/*id, timestamp, team1_value, team2_value*/) {
     }
 
     chart.draw(data, options);
+  }
+}
+
+function displayTopTweets(top_tweets_array) {
+
+  for (x in top_tweets_array) {
+    tweet_box = '<blockquote class="twitter-tweet" lang="en"><p lang="en" dir="ltr">';
+    tweet_box += top_tweets_array[x].text;
+    tweet_box += '</p>&mdash; ' + top_tweets_array[x].user + ' (@' + top_tweets_array[x].user_name + ')';
+    tweet_box += '<a href="https://twitter.com/'+top_tweets_array[x].user_name+'/status/'+top_tweets_array[x].tweet_id+
+                  '"></a></blockquote><script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>';
+
+    if (x % 2 == 0)
+      $("#top_tweets_left").append(tweet_box);
+    else
+      $("#top_tweets_right").append(tweet_box);
   }
 }
 

@@ -121,6 +121,7 @@ lr.on('line',function(line){
 		retweet_obj.user_id = obj.user.id;
 		retweet_obj.user_name= obj.user.screen_name;
 		retweet_obj.no_retweet = no_retweet;
+		retweet_obj.user = obj.user.name;
 
 	//	console.log(JSON.stringify(retweet_obj));
 		

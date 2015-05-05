@@ -2,21 +2,30 @@ extends layout
 
 block content
   div#main
-    div#title Sports Tweets Analyzer
+    div#title Sports + Twitter
     div#container_plot.container_odd
-      div#sectitle Plot
-      div#secdesc Plots tweet sentiments across the time duration of a sporting event
+      div#container_section_header
+        div#sectitle Sentiment Plot
+        div#secdesc Plots tweet sentiments across the time duration of a sporting event
       div#count
       div#series_chart_div
     div#container_most_retweeted.container_even
-      div#sectitle Most Retweets
-      div#secdesc The most retweeted tweet
+      div#container_section_header
+        div#sectitle Most retweets
+        div#secdesc Tweets made during the game that were retweeted the most
+      div#container_section
+        div#top_tweets_left
+        div#top_tweets_right
     div#container_other.container_odd
-      div#sectitle Other features
-      div#secdesc Description of other features
+      div#container_section_header
+        div#sectitle Most mentions
+        div#secdesc Players that received the maximum mentions during the game
+      div#container_section
     div#container_other_more.container_even
-      div#sectitle Other features
-      div#secdesc Description of other features
+      div#container_section_header
+        div#sectitle Other features
+        div#secdesc Description of other features
+      div#container_section
     div#footer.container_odd Copyright
       
 block scripts
@@ -24,4 +33,4 @@ block scripts
   script(src="/javascripts/socket.io.js")
   script(src="/javascripts/jquery.js")
   script(src="/javascripts/client.js")
-  script(async,src="//platform.twitter.com/widgets.js" charset="utf-8")
+  script(async,defer,src="//platform.twitter.com/widgets.js" charset="utf-8")
