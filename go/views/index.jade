@@ -3,31 +3,33 @@ extends layout
 block content
   div#main
     div#title Sports + Twitter
-    div#container_plot.container_odd
+    div#container_plot
       div#container_section_header
         div#sectitle Sentiment Plot
         div#secdesc Plots tweet sentiments across the time duration of a sporting event
-      div#count
-      div#series_chart_div
-    div#container_most_retweeted.container_even
+      div#container_section
+        div#count
+        div#plot_loading.loading
+          img(src="/images/382.GIF", style="width: 50px")
+        div#series_chart_div
+    div#container_most_retweeted
       div#container_section_header
         div#sectitle Most retweets
         div#secdesc Tweets made during the game that were retweeted the most
       div#container_section
+        div#top_tweets_loading.loading
+          img(src="/images/382.GIF", style="width: 50px")
         div#top_tweets_left
         div#top_tweets_right
-    div#container_other.container_odd
-      div#container_section_header
-        div#sectitle Most mentions
-        div#secdesc Players that received the maximum mentions during the game
-      div#container_section
-    div#container_geo.container_even
+    div#container_geo
       div#container_section_header
         div#sectitle Geographic distribution
         div#secdesc blah blah
       div#container_section
+        div#top_tweets_loading.loading
+          img(src="/images/382.GIF", style="width: 50px")
         div#regions_div
-    div#footer.container_odd Copyright
+    div#footer Copyright
       
 block scripts
   script(src="https://www.google.com/jsapi")

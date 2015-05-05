@@ -1,12 +1,15 @@
 
 var data, chart, options;
 var geo_chart_data, geo_chart_options, geo_chart;
-var tweet_q_i = 0, tweet_q_n, tweet_q = [];
+var tweet_q_n = 0, tweet_q = [];
 
 chart_bubble_init();
 chart_geo_init();
 
 function chart_bubble_init() {
+
+  $("#top_plot_loading").show();
+
   // Load the Visualization API and the corechart package.
   google.load('visualization', '1.0', {'packages':['corechart']});
   // Set a callback to run when the Google Visualization API is loaded.
@@ -29,12 +32,14 @@ function chart_bubble_init() {
               minorGridlines : {count : 1}},
       vAxis: {title: 'Sentiment'},
       bubble: {opacity: 0.5, textStyle: {fontSize: 1}},
-      //animation: {duration: 1, startup: true},
+      //animation: {duration: 20, startup: true},
       sizeAxis: {maxSize: 5},
       colorAxis: {legend: {position: 'in'}}
     };
 
     chart = new google.visualization.BubbleChart(document.getElementById('series_chart_div'));
+
+    $("#series_chart_div").hide();
 
     //google.visualization.events.addListener(chart, 'animationfinish', updateBubbleChart);
 
@@ -69,30 +74,76 @@ function chart_geo_init () {
   }
 }
 
-function updateBubbleChart() {
-  if (tweet_q_i < tweet_q_n) {
-    $("#count").text(tweet_q_i);
 
-    for (i = 0; i < 40; i++) {
-      id = tweet_q[tweet_q_i].id;
-      timestamp = tweet_q[tweet_q_i].timestamp;
-      team1_value = tweet_q[tweet_q_i].score.team_1;
-      team2_value = tweet_q[tweet_q_i].score.team_2;
-      timestamp.second = 0;
+function updateBubbleChart(tweet_data) {
 
-      //console.log(new Date(timestamp.year, timestamp.month - 1, timestamp.day, timestamp.hour, timestamp.min, timestamp.second));
+  $("#plot_loading").show();
+  //$("#series_chart_div").text("");
 
-      data.addRow([id, new Date(timestamp.year, timestamp.month - 1, timestamp.day, timestamp.hour, timestamp.min, timestamp.second), team1_value, 'RCB']);
-      data.addRow([id, new Date(timestamp.year, timestamp.month - 1, timestamp.day, timestamp.hour, timestamp.min, timestamp.second), team2_value, 'KKR']);
+  for (x in tweet_data) {
+    id = tweet_data[x].id;
+    timestamp = tweet_data[x].timestamp;
+    team1_value = tweet_data[x].score.team_1;
+    team2_value = tweet_data[x].score.team_2;
+    timestamp.second = 0;
 
-      tweet_q_i++;
-    }
+    //console.log(new Date(timestamp.year, timestamp.month - 1, timestamp.day, timestamp.hour, timestamp.min, timestamp.second));
 
+    data.addRow([id, 
+      new Date(timestamp.year, timestamp.month - 1, timestamp.day, timestamp.hour, timestamp.min, timestamp.second),
+      team1_value, 'RCB']);
+    data.addRow([id,
+      new Date(timestamp.year, timestamp.month - 1, timestamp.day, timestamp.hour, timestamp.min, timestamp.second),
+      team2_value, 'KKR']);
+  }
+  //console.log("AFter: " + tweet_q_i + " " + tweet_q_n);
+  chart.draw(data, options);
+
+  $("#plot_loading").hide();
+}
+
+function updateBubbleChart_q() {
+
+  if (tweet_q_n > 0)
+    $("#top_plot_loading").show();
+  else
+    return;
+
+  i = 0;
+  while (i < tweet_q_n) {
+    $("#count").text(i);
+    id = tweet_q[i].id;
+    timestamp = tweet_q[i].timestamp;
+    team1_value = tweet_q[i].score.team_1;
+    team2_value = tweet_q[i].score.team_2;
+    timestamp.second = 0;
+
+    //console.log(new Date(timestamp.year, timestamp.month - 1, timestamp.day, timestamp.hour, timestamp.min, timestamp.second));
+    data.addRow([id, 
+      new Date(timestamp.year, timestamp.month - 1, timestamp.day, timestamp.hour, timestamp.min, timestamp.second),
+      team1_value, 'RCB']);
+    data.addRow([id,
+      new Date(timestamp.year, timestamp.month - 1, timestamp.day, timestamp.hour, timestamp.min, timestamp.second),
+      team2_value, 'KKR']);
+
+    i++;
+  }
+
+  if (tweet_q_n > 0) {
+    $("#plot_loading").hide();
+    $("#series_chart_div").show();
     chart.draw(data, options);
   }
+
+  tweet_q_n = 0;
+  tweet_q = [];
 }
 
 function displayTopTweets(top_tweets_array) {
+
+  $("#top_tweets_loading").show();
+  $("#top_tweets_left").text("");
+  $("#top_tweets_right").text("");
 
   for (x in top_tweets_array) {
     tweet_box = '<blockquote class="twitter-tweet" lang="en"><p lang="en" dir="ltr">';
@@ -106,6 +157,8 @@ function displayTopTweets(top_tweets_array) {
     else
       $("#top_tweets_right").append(tweet_box);
   }
+
+  $("#top_tweets_loading").hide();
 }
 
 
@@ -122,6 +175,8 @@ $(document).ready(function() {
 		//console.log(tweet_data);
     tweet_q[tweet_q_n] = tweet_data;
     tweet_q_n++;
+
+    //updateBubbleChart(tweet_data);
 	});
 
   // Listener on the 'top_tweets' event
@@ -149,7 +204,8 @@ $(document).ready(function() {
   })
 
   // Call updateBubbleChart every 1 ms
-  setInterval(updateBubbleChart, 1);
+  //if (tweet_q_i > )
+  setInterval(updateBubbleChart_q, 500);
 });
 
 

@@ -50,12 +50,8 @@ div#secdesc {
 	margin-bottom: 5px;
 }
 
-div.container_odd {
-	background: #FFFFFF;
-}
-
-div.container_even {
-	background: #FFFFFF;
+div.loading {
+	text-align: center;
 }
 
 div#container_section {
@@ -69,9 +65,6 @@ div#series_chart_div {
 	width: 1100px;
 	height: 600px;
 	margin: auto;
-}
-
-div#container_most_retweeted {
 }
 
 div#top_tweets_left {
