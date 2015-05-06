@@ -19,10 +19,10 @@ block content
           | correspond to negative sentiments.
           | So a single bubble in the chart represents a measure of the
           | cumulative sentiments obtained from several tweets in the given minute.
-          div#series_chart_div          
+          div#series_chart_div
     div#container_most_retweeted
       div#container_section_header
-        div#sectitle Most retweets
+        div#sectitle Most Retweets
         div#secdesc Tweets with the most number of retweets
       div#container_section
         div#top_tweets_loading.loading
@@ -31,7 +31,7 @@ block content
         div#top_tweets_right
     div#container_geo
       div#container_section_header
-        div#sectitle Geographic distribution
+        div#sectitle Geographic Distribution
         div#secdesc Plots the locations of the tweets on a map. Only shown for tweets having embedded geo-location data.
       div#container_section
         div#geo_loading.loading
@@ -44,7 +44,10 @@ block content
             img(src="http://icons.iconarchive.com/icons/uiconstock/flatin-social/16/twitter-2-icon.png")
             |  KKR
           div#regions_div
-    div#footer Copyright
+    div#footer
+      | Twitter Analyzer
+      br
+      | CSC 591 Advanced Algorithms, Fall '15
       
 block scripts
   script(src="https://www.google.com/jsapi")

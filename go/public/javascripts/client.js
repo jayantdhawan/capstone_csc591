@@ -84,6 +84,8 @@ function chart_geo_init () {
         }
     };
 
+    $("#geo_content").hide();
+
     geo_chart = new google.visualization.Map(document.getElementById('regions_div'));
   }
 }
@@ -125,7 +127,7 @@ function updateBubbleChart_q() {
 
   i = 0;
   while (i < tweet_q_n) {
-    $("#count").text(i);
+    //$("#count").text(i);
     id = tweet_q[i].id;
     timestamp = tweet_q[i].timestamp;
     team1_value = tweet_q[i].score.team_1;
@@ -208,6 +210,7 @@ $(document).ready(function() {
 
         geo_chart.draw(geo_chart_data, geo_chart_options);
         $("#geo_loading").hide();
+        $("#geo_content").show();
   });
 
   // Listener on the 'geo_data_team2' event for geocoding data of team 2
@@ -217,6 +220,7 @@ $(document).ready(function() {
 
         geo_chart.draw(geo_chart_data, geo_chart_options);
         $("#geo_loading").hide();
+        $("#geo_content").show();
   })
 
   // Call updateBubbleChart every 1 ms

@@ -189,11 +189,11 @@ sio.sockets.on('connection', function(socket){
 
 	console.log('Web client connected');
 
-// Store all the keys from score_map and send each key-value pair one by one to client.
+
 	
-// Emit the sentiment score data to client.
+
 	setTimeout(send_to_socket, 1000,socket);
-		// Emit the Geographical data for both teams to client.
+		
 	
 // Event handler if the client is disconnectd.
 
@@ -213,7 +213,7 @@ function send_to_socket(socket)
 	else
 	{
 		setTimeout(function() {
-
+			// Store all the keys from score_map and send each key-value pair one by one to client.
 			var list_date_obj = score_map.keys();
 			for(var i=0; i<list_date_obj.length; i++)
 			{
@@ -234,7 +234,7 @@ function send_to_socket(socket)
 				return b.no_retweet - a.no_retweet;
 			}));
 		},400);
-
+		// Emit the Geographical data for both teams to client.
 		setTimeout(function() {
 			socket.emit('geo_data_team1',geo_team1);
 			socket.emit('geo_data_team2',geo_team2);
