@@ -74,12 +74,12 @@ function chart_geo_init () {
         useMapTypeControl: true,
         icons: {
             blue: {
-            	normal: 'http://icons.iconarchive.com/icons/blackvariant/button-ui-requests-3/16/Twitter-icon.png',
-        		selected: 'http://icons.iconarchive.com/icons/blackvariant/button-ui-requests-3/16/Twitter-icon.png'
+            	normal: 'http://icons.iconarchive.com/icons/icons-land/vista-map-markers/16/Map-Marker-Push-Pin-2-Right-Azure-icon.png',
+        		selected: 'http://icons.iconarchive.com/icons/icons-land/vista-map-markers/16/Map-Marker-Push-Pin-2-Right-Azure-icon.png'
             },
             red: {
-       			normal: 'http://icons.iconarchive.com/icons/uiconstock/flatin-social/16/twitter-2-icon.png',
-        		selected: 'http://icons.iconarchive.com/icons/uiconstock/flatin-social/16/twitter-2-icon.png'
+       			normal: 'http://icons.iconarchive.com/icons/icons-land/vista-map-markers/16/Map-Marker-Push-Pin-2-Right-Pink-icon.png',
+        		selected: 'http://icons.iconarchive.com/icons/icons-land/vista-map-markers/16/Map-Marker-Push-Pin-2-Right-Pink-icon.png'
             }
         }
     };
