@@ -8,14 +8,22 @@ block content
         div#sectitle Sentiment Plot
         div#secdesc Plots tweet sentiments across the time duration of a sporting event
       div#container_section
-        div#count
         div#plot_loading.loading
           img(src="/images/382.GIF", style="width: 50px")
-        div#series_chart_div
+        div#plot_content
+          | The bubble chart below shows an approximate progression of the sentiments
+          | observed from the tweets made during the sporting event.
+          | The x-axis is the time axis, where a unit corresponds to a single minute.
+          | The y-axis shows the sentiments extracted from the tweets as a value. Positive 
+          | values on the y-axis indicate positive sentiments. Similarly, negative values
+          | correspond to negative sentiments.
+          | So a single bubble in the chart represents a measure of the
+          | cumulative sentiments obtained from several tweets in the given minute.
+          div#series_chart_div          
     div#container_most_retweeted
       div#container_section_header
         div#sectitle Most retweets
-        div#secdesc Tweets made during the game that were retweeted the most
+        div#secdesc Tweets with the most number of retweets
       div#container_section
         div#top_tweets_loading.loading
           img(src="/images/382.GIF", style="width: 50px")
@@ -24,11 +32,18 @@ block content
     div#container_geo
       div#container_section_header
         div#sectitle Geographic distribution
-        div#secdesc blah blah
+        div#secdesc Plots the locations of the tweets on a map. Only shown for tweets having embedded geo-location data.
       div#container_section
         div#geo_loading.loading
           img(src="/images/382.GIF", style="width: 50px")
-        div#regions_div
+        div#geo_content
+          div(style="text-align:center; margin-bottom: 5px")
+            img(src="http://icons.iconarchive.com/icons/blackvariant/button-ui-requests-3/16/Twitter-icon.png")
+            |  RCB
+            | 
+            img(src="http://icons.iconarchive.com/icons/uiconstock/flatin-social/16/twitter-2-icon.png")
+            |  KKR
+          div#regions_div
     div#footer Copyright
       
 block scripts

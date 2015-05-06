@@ -27,7 +27,7 @@ function chart_bubble_init() {
 
     options = {
       width: 1100,
-      height: 440,
+      height: 380,
       hAxis: {title: 'Time', format: 'MMM dd, hh:mm aa', gridlines : {count : 8},
               minorGridlines : {count : 1}},
       vAxis: {title: 'Sentiment'},
@@ -39,7 +39,7 @@ function chart_bubble_init() {
 
     chart = new google.visualization.BubbleChart(document.getElementById('series_chart_div'));
 
-    $("#series_chart_div").hide();
+    $("#plot_content").hide();
 
     //google.visualization.events.addListener(chart, 'animationfinish', updateBubbleChart);
 
@@ -49,7 +49,7 @@ function chart_bubble_init() {
 
 function chart_geo_init () {
   // Load the Visualization API and the geochart package.
-  google.load("visualization", "1", {packages:["geochart"]});
+  google.load("visualization", "1", {packages:["map"]});
   // Set a callback to run when the Google Visualization API is loaded.
   google.setOnLoadCallback(drawRegionsMap);
 
@@ -58,19 +58,33 @@ function chart_geo_init () {
 
     geo_chart_data.addColumn('number', 'lat');
     geo_chart_data.addColumn('number', 'long');
-    geo_chart_data.addColumn('number', 'color');
+    geo_chart_data.addColumn('string', 'name');
+    geo_chart_data.addColumn('string', 'marker');
     //geo_chart_data.addColumn('number', 'size');
 
     geo_chart_options = {
         sizeAxis: { minSize: 3, maxSize: 3 },
-        displayMode: 'markers',
         legend: 'none',
-        region: 142,
         width: 1100,
-        colorAxis: {values: [0, 1], colors: ['#e7711c', '#4374e0']} // orange to blue
+        //colorAxis: {values: [0, 1], colors: ['#e7711c', '#4374e0']}, // orange to blue
+        enableScrollWheel: true,
+        useMapTypeControl: true,
+        mapType: 'normal',
+        zoomLevel: 2,
+        useMapTypeControl: true,
+        icons: {
+            blue: {
+            	normal: 'http://icons.iconarchive.com/icons/blackvariant/button-ui-requests-3/16/Twitter-icon.png',
+        		selected: 'http://icons.iconarchive.com/icons/blackvariant/button-ui-requests-3/16/Twitter-icon.png'
+            },
+            red: {
+       			normal: 'http://icons.iconarchive.com/icons/uiconstock/flatin-social/16/twitter-2-icon.png',
+        		selected: 'http://icons.iconarchive.com/icons/uiconstock/flatin-social/16/twitter-2-icon.png'
+            }
+        }
     };
 
-    geo_chart = new google.visualization.GeoChart(document.getElementById('regions_div'));
+    geo_chart = new google.visualization.Map(document.getElementById('regions_div'));
   }
 }
 
@@ -131,7 +145,7 @@ function updateBubbleChart_q() {
 
   if (tweet_q_n > 0) {
     $("#plot_loading").hide();
-    $("#series_chart_div").show();
+    $("#plot_content").show();
     chart.draw(data, options);
   }
 
@@ -190,7 +204,7 @@ $(document).ready(function() {
         //console.log(geo_data);
 
         for(i =0; i<geo_data.length; i++)
-          geo_chart_data.addRow([geo_data[i][0], geo_data[i][1],0]);
+          geo_chart_data.addRow([geo_data[i][0], geo_data[i][1], 'asd', 'blue']);
 
         geo_chart.draw(geo_chart_data, geo_chart_options);
         $("#geo_loading").hide();
@@ -199,7 +213,7 @@ $(document).ready(function() {
   // Listener on the 'geo_data_team2' event for geocoding data of team 2
   sio.on('geo_data_team2', function(geo_data) {
         for(i =0; i<geo_data.length; i++)
-          geo_chart_data.addRow([geo_data[i][0], geo_data[i][1],1]);
+          geo_chart_data.addRow([geo_data[i][0], geo_data[i][1], 'asda', 'red']);
 
         geo_chart.draw(geo_chart_data, geo_chart_options);
         $("#geo_loading").hide();
