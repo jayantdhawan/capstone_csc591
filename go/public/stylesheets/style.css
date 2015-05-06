@@ -17,6 +17,29 @@ a:hover {
 div#main {
 }
 
+div#teamslogo {
+	display: none;
+	text-align: center;
+	height: 100px;
+	padding: 20px;
+	background: #FFFFFF;
+	font-size: 24px;
+	vertical-align: middle;
+}
+
+div#teamslogo span {
+	display: none;
+	margin-left: 20px;
+	margin-right: 20px;
+}
+
+
+div#teamslogo img {
+	display: none;
+	height: 100px;
+	vertical-align: middle;
+}
+
 div#title {
 	padding-left: 40px;
 	padding-right: 40px;
@@ -25,6 +48,7 @@ div#title {
 	font-size: 20pt;
 	color: #000000;
 	height: 20px;
+	background: #EEEEFF;
 }
 
 div#container_section_header {

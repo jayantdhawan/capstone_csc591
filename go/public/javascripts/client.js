@@ -201,6 +201,15 @@ $(document).ready(function() {
     displayTopTweets(top_tweets_array);
   });
 
+	setTimeout(function() {
+		$("#teamslogo").slideDown(800);
+		setTimeout(function() {
+			$("#teamslogo span").fadeIn("slow");
+			$("#teamslogo img").fadeIn("slow");
+		}, 400);
+	}, 200);
+
+
   // Listener on the 'geo_data_team1' event for geocoding data of team 1
   sio.on('geo_data_team1', function(geo_data) {
         //console.log(geo_data);
